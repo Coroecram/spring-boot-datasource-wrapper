@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: datasourcewrapper
+Implementation-Version: 20170914
+Built-By: mbudnick
+Implementation-Vendor-Id: org.datasourcewrapper
+Build-Jdk: 1.8.0_92
+Implementation-URL: http://www.mikebudnick.com
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+
