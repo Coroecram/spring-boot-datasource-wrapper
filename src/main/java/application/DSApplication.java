@@ -1,7 +1,7 @@
-package org.datasourcewrapper;
+package application;
 
 import javax.sql.DataSource;
-
+import datasourcewrapper.DataSourceWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
