@@ -1,0 +1,13 @@
+---
+layout: post
+title: How To Create a Data Source Wrapper in Spring Boot
+date:   2017-09-14 12:00:00 -0400
+---
+
+I am currently working on a project at work that will take results from the source and return them in [GeoJSON Format](https://tools.ietf.org/html/rfc7946). It is based on an earlier project that we helped with that returned results in OData format. However, I was interested in working with Spring Boot instead of Spring for this project, after the project manager gave a good review for it but said that it would take some more work in order to research it. I was excited to work with a new technology!
+
+## TL;DR: The source code is available at <a href="https://github.com/Coroecram/spring-boot-datasource-wrapper">https://github.com/Coroecram/spring-boot-datasource-wrapper</a>. Check out the /src/main/java/org/datasourcewrapper/DSApplication.java and /src/main/resources/application.properties.
+
+There are many similarities between Spring and Spring-Boot, Spring-Boot *is* built on top of Spring. In general, Spring-Boot attempts to make things more convenient and automatic. However, one of the big changes was with the configuration of Beans, which is one of the most important things for any Spring project.
+
+For this project, we needed to build a datasource wrapper, as I like to call it, that would have separate behaviors than a normal DataSource. For example, we needed to reauthenticate user sessions on the underlying data source on a different connection than the one included
