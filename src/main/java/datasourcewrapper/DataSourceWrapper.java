@@ -13,12 +13,12 @@ import org.springframework.jdbc.support.JdbcUtils;
 import connectionwrapper.ConnectionWrapper;
 
 public class DataSourceWrapper implements DataSource {
-    
+
     // PARAMETER INIT
     public final static String USER_NAME = "user";
-    public final static String PASSWORD = "password";
+    public final static String PASSWORD =  "password";
     public final static String DATABASE_NAME = "databaseName";
-    
+
     // ERRORS
     private static final String AUTHENTICATION_ERROR = "The username or password is incorrect";
     private static final String AUTHORIZATION_ERROR = "Insufficient privileges to connect to the database";
@@ -28,12 +28,12 @@ public class DataSourceWrapper implements DataSource {
     private DataSource datasource;
     private final ThreadLocal<ConnectionWrapper> authenticatedConnection = new ThreadLocal<>();
     private final ThreadLocal<Map<String, String>> parameters = new ThreadLocal<>();
-    
+
     public DataSourceWrapper(DataSource datasource) {
         super();
         this.datasource = datasource;
       }
-    
+
     public void setParameters(final Map<String, String> parameters) {
         this.parameters.set(parameters);
       }
@@ -97,23 +97,22 @@ public class DataSourceWrapper implements DataSource {
           // new session in the server with a new profile.
 
           command = "CONNECT DATABASE ?";
-          
+
           stmt = connection.prepareStatement(command);
           stmt.setString(1, this.parameters.get().get(DATABASE_NAME));
         } else {
           command = "CONNECT USER ? PASSWORD ? DATABASE ?";
-        
+
           stmt = connection.prepareStatement(command);
           stmt.setString(1, this.parameters.get().get(USER_NAME));
           stmt.setString(2, this.parameters.get().get(PASSWORD));
           stmt.setString(3, this.parameters.get().get(DATABASE_NAME));
         }
 
-        this.authenticatedConnection.set(connection);        
-        stmt.execute(command.toString());
+        stmt.execute();
+        this.authenticatedConnection.set(connection);
 
         return connection;
-
       } catch (final SQLException e) {
         if (e.getMessage() != null) {
           if (e.getMessage().contains(CONNECTION_REFUSED_ERROR)) { // Check connection refused
