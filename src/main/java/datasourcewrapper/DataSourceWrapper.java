@@ -2,6 +2,7 @@ package datasourcewrapper;
 
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
@@ -15,8 +16,8 @@ public class DataSourceWrapper implements DataSource {
     
     // PARAMETER INIT
     public final static String USER_NAME = "user";
-    public final static String PASSWORD_NAME = "password";
-    public final static String DATA_BASE_NAME = "databaseName";
+    public final static String PASSWORD = "password";
+    public final static String DATABASE_NAME = "databaseName";
     
     // ERRORS
     private static final String AUTHENTICATION_ERROR = "The username or password is incorrect";
@@ -82,12 +83,12 @@ public class DataSourceWrapper implements DataSource {
     @Override
     public Connection getConnection() throws SQLException {
 
-      Statement stmt = null;
+      PreparedStatement stmt = null;
 
       try {
 
         ConnectionWrapper connection = this.authenticatedConnection.get();
-        StringBuilder command;
+        String command;
         if (connection == null) {
           connection = new ConnectionWrapper(this.datasource.getConnection());
 
@@ -95,19 +96,20 @@ public class DataSourceWrapper implements DataSource {
           // and a database to initiate a
           // new session in the server with a new profile.
 
-          command = new StringBuilder("CONNECT ").append(" DATABASE ").append("<databasename>"); //this.parameters.get().get(DATA_BASE_NAME)
+          command = "CONNECT DATABASE ?";
+          
+          stmt = connection.prepareStatement(command);
+          stmt.setString(1, this.parameters.get().get(DATABASE_NAME));
         } else {
-
-        command = new StringBuilder("CONNECT USER ").append(this.parameters.get().get(USER_NAME)) 
-            .append(" PASSWORD ")
-            .append("'").append(this.parameters.get().get(PASSWORD_NAME)).append("'")
-            .append(" DATABASE ")
-            .append(this.parameters.get().get(DATA_BASE_NAME));
+          command = "CONNECT USER ? PASSWORD ? DATABASE ?";
+        
+          stmt = connection.prepareStatement(command);
+          stmt.setString(1, this.parameters.get().get(USER_NAME));
+          stmt.setString(2, this.parameters.get().get(PASSWORD));
+          stmt.setString(3, this.parameters.get().get(DATABASE_NAME));
         }
 
-        this.authenticatedConnection.set(connection);
-
-        stmt = connection.createStatement();
+        this.authenticatedConnection.set(connection);        
         stmt.execute(command.toString());
 
         return connection;
